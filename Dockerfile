@@ -3,7 +3,7 @@ MAINTAINER Daisuke Shiamda
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 ENV SCALA_VERSION 2.11.7
-ENV SBT_VERSION 0.13.8
+ENV SBT_VERSION 0.13.11
 
 RUN \
   apt-get update && \
