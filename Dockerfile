@@ -2,12 +2,10 @@ FROM ubuntu:14.04
 MAINTAINER Daisuke Shiamda
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
-ENV SCALA_VERSION 2.11.7
-ENV SBT_VERSION 0.13.11
 
 RUN \
   apt-get update && \
-  apt-get install -y nodejs npm ruby curl git
+  apt-get install -y nodejs npm ruby curl git apt-transport-https
 
 # Install locale ja_JP
 RUN \
@@ -26,20 +24,17 @@ RUN \
 # Install Scala
 RUN \
   cd /root && \
-  curl -o scala-$SCALA_VERSION.tgz http://downloads.typesafe.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz && \
-  tar -xf scala-$SCALA_VERSION.tgz && \
-  rm scala-$SCALA_VERSION.tgz && \
-  echo >> /root/.bashrc && \
-  echo 'export PATH=~/scala-$SCALA_VERSION/bin:$PATH' >> /root/.bashrc
+  wget www.scala-lang.org/files/archive/scala-2.11.7.deb && \
+  dpkg -i scala-2.11.7.deb
 
 # Install sbt
 RUN \
-  curl -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb && \
-  dpkg -i sbt-$SBT_VERSION.deb && \
-  rm sbt-$SBT_VERSION.deb && \
+  echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list && \
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823 && \
   apt-get update && \
   apt-get install sbt
 
+RUN sbt sbt-version
 RUN npm install -g typescript
 RUN gem install sass
 RUN ln -s /usr/bin/nodejs /usr/bin/node
